@@ -84,6 +84,8 @@ type g_vector_add_##sign(g_vector_t * vec, type element) {\
 
 #define DECLARE_G_VECTOR_PTR(type) __DECLARE_G_VECTOR_DISAMBIGUATION(type##_ptr, type*)
 
+#define DECLARE_G_VECTOR_FUNC_PTR(typedef_n) __DECLARE_G_VECTOR_DISAMBIGUATION(typedef_n, typedef_n)
+
 void g_vector_free_ptr(g_vector_t target) {
     g_vector_for_each(target, void*, free);
     g_vector_free(target);

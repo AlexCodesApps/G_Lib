@@ -11,7 +11,7 @@ typedef struct {
 } g_arena_t;
 
 #define g_arena_init(arena, type) \
-g_vector_init((arena).arr, type, 0); \
+g_vector_init((arena).arr, type, 1); \
 (arena).destructor = NULL;
 
 #define g_arena_init_d(arena, type, deleter) \
@@ -37,12 +37,12 @@ g_arena_t g_arena_init_d_##sign(void * destructor) {\
 }\
 \
 type * g_arena_new_ptr_##sign(g_arena_t * arena) {\
-    g_vector_add(arena->arr, (type)0);\
+    g_vector_add(arena->arr, 0b0);\
     return &g_vector_get(arena->arr, type, arena->arr.len-1);\
 }\
 \
 size_t g_arena_new_index_##sign(g_arena_t * arena) {\
-    g_vector_add(arena->arr, (type)0);\
+    g_vector_add(arena->arr, 0b0);\
     return arena->arr.len-1;\
 }\
 \
