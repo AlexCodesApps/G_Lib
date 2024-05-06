@@ -10,7 +10,8 @@ int main(int argc, char const *argv[])
     char another[] = "dog";
     g_hashmap_add_string_int(&map, str, 10);
     g_hashmap_add_string_int(&map, another, 20);
-    printf("%d\n", *g_hashmap_get_string_int(&map, str));
+    printf("%d\n", *g_hashmap_get_string_int(&map, "Hello World"));
     printf("%d\n", *g_hashmap_get_string_int(&map, another));
+    g_hashmap_free_string_int(&map);
     return 0;
 }
