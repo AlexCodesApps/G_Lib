@@ -2,7 +2,6 @@
 #define G_VECTOR_H
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 typedef struct g_vector {
     size_t size;
@@ -35,11 +34,12 @@ if ((vec).len * (vec).element_size >= (vec).size) {\
 }\
 ((typeof(element)*)(vec).arr)[(vec).len++] = element;
 
-#define g_vector_free(vec) \
-if ((vec).arr != NULL) free((vec).arr); \
-(vec).size = 0; \
-(vec).len = 0; \
-(vec).element_size = 0;
+void g_vector_free(g_vector_t * vec) {
+    if ((vec)->arr != NULL) free((vec)->arr);
+    (vec)->size = 0; \
+    (vec)->len = 0; \
+    (vec)->element_size = 0;
+}
 
 #define g_vector_remove(vec, index) \
 if (index < (vec).len && (vec).len >= 0 && (vec).len > 0) {\
@@ -99,7 +99,7 @@ void free_if_valid(void * ptr) {
 
 void g_vector_free_ptr(g_vector_t target) {
     g_vector_for_each(target, void*, free_if_valid);
-    g_vector_free(target);
+    g_vector_free(&target);
 }
 
 g_vector_t g_vector_copy(const g_vector_t target) {

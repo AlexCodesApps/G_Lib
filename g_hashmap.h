@@ -3,7 +3,7 @@
 #include "g_vector.h"
 #include <limits.h>
 #include <stdio.h>
-#define g_hashtable_size INT8_MAX
+#define g_hashmap_size INT8_MAX
 
 uint64_t g_hash_function(void * data, size_t len) {
     uint16_t hash_value = 0;
@@ -11,7 +11,7 @@ uint64_t g_hash_function(void * data, size_t len) {
         hash_value += ((unsigned char*)data)[i];
         hash_value *= ((unsigned char*)data)[len - i];
     }
-    return hash_value % g_hashtable_size;
+    return hash_value % g_hashmap_size;
 }
 
 #define g_hash_function_string(str) g_hash_function(str, strnlen(str, INT64_MAX))
@@ -74,7 +74,7 @@ void g_hashmap_remove_##sign##_##sign2(g_hashmap_t * h_table, type key) {\
 }\
 
 typedef struct {
-    g_vector_t table[g_hashtable_size];
+    g_vector_t table[g_hashmap_size];
     size_t key_size;
     size_t value_size;
 } g_hashmap_t;
@@ -104,17 +104,15 @@ void g_hashmap_add_string_##sign2(g_hashmap_t * h_table, char * key, const type2
     g_vector_add(h_table->table[hash], new_element);\
 }\
 void g_hashmap_free_string_##sign2(g_hashmap_t * h_table) {\
-    for (int i = 0; i < g_hashtable_size; i++) {\
+    for (int i = 0; i < g_hashmap_size; i++) {\
         for (int c = 0; c < h_table->table[i].len; c++) {\
             free(g_vector_get(h_table->table[i], g_pair_string_##sign2, c).first);\
         }\
     } \
 }
 
-void g_hashmap_free_ptrs(g_hashmap_t * h_table) {
-    for (int i = 0; i < g_hashtable_size; i++) {
-        g_vector_free_ptr(h_table->table[i]);
-    }
+void g_hashmap_free(g_hashmap_t * h_table) {
+    for (int i = 0; i < g_hashmap_size; i++) g_vector_free(&h_table->table[i]);
 }
 
 #define DECLARE_G_HASHMAP_STRING_V(x) __DECLARE_G_HASHMAP_STRING_DISAMBIGUATION(x, x)
