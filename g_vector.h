@@ -2,6 +2,7 @@
 #define G_VECTOR_H
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef struct g_vector {
     size_t size;
@@ -14,12 +15,18 @@ typedef struct g_vector {
 (vec).len = 0;\
 (vec).element_size = sizeof(Type);\
 (vec).size = (Len > 1) ? Len * (vec).element_size : 2 * (vec).element_size;\
-if (Len > 0) {\
-    (vec).arr =  malloc((vec).size);\
-}\
+(vec).arr =  malloc((vec).size);
+
+#define g_vector_init_s(vec, element_size, Len) \
+(vec).len = 0;\
+(vec).element_size = element_size;\
+(vec).size = (Len > 1) ? Len * (vec).element_size : 2 * (vec).element_size;\
+(vec).arr =  malloc((vec).size);\
 else (vec).arr = NULL;\
 
 #define g_vector_get(vec, type, index) ((type*)(vec).arr)[index]
+
+#define g_vector_get_void(vec, len, index) ((vec).arr + len * index)
 
 #define g_vector_add(vec, element) \
 if ((vec).len * (vec).element_size >= (vec).size) {\
@@ -35,9 +42,9 @@ if ((vec).arr != NULL) free((vec).arr); \
 (vec).element_size = 0;
 
 #define g_vector_remove(vec, index) \
-if (index < vec.len && vec.len >= 0 && vec.len > 0) {\
-    if (index == vec.len -1) vec.len--;\
-    else memcpy(&vec.arr[index*vec.element_size], &vec.arr[(index+1)*vec.element_size], (--vec.len - index)*vec.element_size);\
+if (index < (vec).len && (vec).len >= 0 && (vec).len > 0) {\
+    if (index == (vec).len -1) (vec).len--;\
+    else memcpy(&(vec).arr[index*(vec).element_size], &(vec).arr[(index+1)*(vec).element_size], (--(vec).len - index)*(vec).element_size);\
 }\
 
 #define g_vector_transform(vec, type, func) \
@@ -80,11 +87,11 @@ type g_vector_add_##sign(g_vector_t * vec, type element) {\
     return g_vector_get(*vec, type, vec->len);\
 }
 
-#define DECLARE_G_VECTOR(type) __DECLARE_G_VECTOR_DISAMBIGUATION(type, type)
+#define DECLARE_G_VECTOR(type) __DECLARE_G_VECTOR_DISAMBIGUATION(type, type);
 
-#define DECLARE_G_VECTOR_PTR(type) __DECLARE_G_VECTOR_DISAMBIGUATION(type##_ptr, type*)
+#define DECLARE_G_VECTOR_PTR(type) __DECLARE_G_VECTOR_DISAMBIGUATION(type##_ptr, type*);
 
-#define DECLARE_G_VECTOR_FUNC_PTR(typedef_n) __DECLARE_G_VECTOR_DISAMBIGUATION(typedef_n, typedef_n)
+#define DECLARE_G_VECTOR_FUNC_PTR(typedef_n) __DECLARE_G_VECTOR_DISAMBIGUATION(typedef_n, typedef_n);
 
 void g_vector_free_ptr(g_vector_t target) {
     g_vector_for_each(target, void*, free);
