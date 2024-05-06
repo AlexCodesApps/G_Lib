@@ -5,7 +5,7 @@
 #include <stdio.h>
 #define g_hashmap_size INT8_MAX
 
-uint64_t g_hash_function(void * data, size_t len) {
+uint64_t g_hash_function(const void * data, size_t len) {
     uint16_t hash_value = 0;
     for (int i = len - 1; i >= 0; i--) {
         hash_value += ((unsigned char*)data)[i];
@@ -25,8 +25,8 @@ typedef struct {\
 #define DECLARE_G_PAIR(type, type2) __DECLARE_G_PAIR_DISAMBIGUATION(type, type2, type, type2)
 
 #define __DECLARE_G_HASHMAP_DISAMBIGUATION(sign, sign2, type, type2, cmp_type, hasher) \
-__DECLARE_G_PAIR_DISAMBIGUATION(sign, sign2, type, type2, hasher) \
-__G_HASHMAP_INIT_STD(sign, sign2, type, type2, hasher) \
+__DECLARE_G_PAIR_DISAMBIGUATION(sign, sign2, type, type2) \
+__G_HASHMAP_INIT_STD(sign, sign2, type, type2) \
 __G_HASHMAP_ADD_STD(sign, sign2, type, type2, hasher) \
 __G_HASHMAP_GET_STD(sign, sign2, type, type2, cmp_type, hasher) \
 __G_HASHMAP_REMOVE_STD(sign, sign2, type, type2, cmp_type, hasher)
@@ -116,5 +116,6 @@ void g_hashmap_free(g_hashmap_t * h_table) {
 }
 
 #define DECLARE_G_HASHMAP_STRING_V(x) __DECLARE_G_HASHMAP_STRING_DISAMBIGUATION(x, x)
+#define DECLARE_G_HASHMAP_STRING_P(x) __DECLARE_G_HASHMAP_STRING_DISAMBIGUATION(x##_ptr, x*)
 
 #endif
